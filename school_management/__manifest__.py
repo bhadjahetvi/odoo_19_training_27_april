@@ -17,7 +17,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','account'],
+    'depends': ['base','account','sale'],
 
     # always loaded
     'data': [
@@ -25,10 +25,12 @@ Long description of module's purpose
         'views/student_view.xml',
         'views/teacher_view.xml',
         'views/subject_view.xml',
+        'views/res_partner_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+'license': 'LGPL-3',
 }
 
