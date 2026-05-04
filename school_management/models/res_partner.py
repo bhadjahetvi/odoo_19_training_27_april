@@ -12,7 +12,6 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     def action_confirm(self):
-        res = super(SaleOrder, self).action_confirm()
         for order in self:
             partner = order.partner_id
 
@@ -35,4 +34,4 @@ class SaleOrder(models.Model):
                     f"Current Total: {total_amount}"
                 )
 
-        return res
+        return super().action_confirm()

@@ -1,6 +1,6 @@
 <odoo>
 
-    <!-- FORM VIEW-->
+    <!-- ================= FORM VIEW ================= -->
     <record id="view_student_form" model="ir.ui.view">
         <field name="name">student.form</field>
         <field name="model">school.student</field>
@@ -15,18 +15,25 @@
                             class="btn-primary"
                             invisible="status != 'draft'"/>
 
-                    <button name="action_done"
-                            string="Done"
-                            type="object"
-                            class="btn-success"
-                            invisible="status != 'confirm'"/>
+                        <button name="action_done"
+                                string="Done"
+                                type="object"
+                                class="btn-success"
+                                invisible="status != 'confirm'"/>
 
-                    <button name="action_pay"
-                            string="Pay"
-                            type="object"
-                            class="btn-warning"
-                            invisible="status != 'confirm'"/>
+                        <button name="action_pay"
+                                string="Pay"
+                                type="object"
+                                class="btn-warning"
+                                invisible="status != 'confirm'"/>
 
+                        <button name="action_reset_to_draft"
+                                string="Reset to Draft"
+                                type="object"
+                                class="btn-secondary"
+                                invisible="status == 'draft'"/>
+
+                    <!--Statusbar -->
                     <field name="status"
                            widget="statusbar"
                            statusbar_visible="draft,confirm,done"/>
@@ -35,7 +42,7 @@
 
                 <sheet>
 
-                    <!--HEADER -->
+                    <!-- HEADER -->
                     <div class="d-flex flex-column flex-sm-row align-items-center">
 
                         <!-- IMAGE -->
@@ -61,19 +68,19 @@
 
                                 <!-- EMAIL -->
                                 <h5 class="d-flex align-items-center mb-1">
-                                    <i class="fa fa-envelope me-2 text-primary" title="Email"/>
+                                    <i class="fa fa-envelope me-2 text-primary"/>
                                     <field name="email" widget="email"/>
                                 </h5>
 
                                 <!-- PHONE -->
                                 <h5 class="d-flex align-items-center mb-1">
-                                    <i class="fa fa-phone me-2 text-primary" title="Phone"/>
+                                    <i class="fa fa-phone me-2 text-primary"/>
                                     <field name="phone" widget="phone"/>
                                 </h5>
 
                                 <!-- GENDER -->
                                 <h5 class="d-flex align-items-center mb-1">
-                                    <i class="fa fa-user me-2 text-primary" title="Gender"/>
+                                    <i class="fa fa-user me-2 text-primary"/>
                                     <field name="gender"/>
                                 </h5>
 
@@ -92,13 +99,15 @@
                         </group>
 
                         <!-- RIGHT -->
-                            <group string="School Details">
-                                <field name="subject_ids" widget="many2many_tags"/>
-                                <field name="teacher_id" widget="many2many_tags"/>
-                                <field name="currency_id"/>
-                                <field name="fees" widget="monetary" readonly="1"/>
-                            </group>
+                        <group string="School Details">
+                            <field name="subject_ids" widget="many2many_tags"/>
+                            <field name="teacher_id" widget="many2many_tags"/>
+                            <field name="currency_id"/>
+                            <field name="fees" widget="monetary" readonly="1"/>
+                        </group>
+
                     </group>
+
                     <!-- NOTES -->
                     <notebook>
                         <page string="Notes">

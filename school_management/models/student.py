@@ -37,36 +37,12 @@ class Student(models.Model):
         tracking=True
     )
 
-    fees = fields.Monetary(
-        string="Total Fees",
-        compute="_compute_fees",
-        store=True,
-        currency_field='currency_id'
-    )
-
-    @api.depends('subject_ids.fee')
-    def _compute_fees(self):
-        for record in self:
-            fees_list = cast(List[float], record.subject_ids.mapped('fee'))
-            record.fees = sum(fees_list)
-
-
     teacher_id = fields.Many2many(
         'school.teacher',
         string="Teacher",
         compute="_compute_teacher",
         store=True
     )
-
-    @api.depends('subject_ids.teacher_id')
-    def _compute_teacher(self):
-        for rec in self:
-            rec.teacher_id = rec.subject_ids.mapped('teacher_id')
-
-    notes = fields.Text("Notes", tracking=True)
-    image = fields.Binary("Image", tracking=True)
-    email = fields.Char("Email", tracking=True)
-    phone = fields.Char("Phone", tracking=True)
 
     fees_ids = fields.One2many(
         'school.fees',
@@ -81,6 +57,29 @@ class Student(models.Model):
         tracking=True
     )
 
+    notes = fields.Text("Notes", tracking=True)
+    image = fields.Binary("Image", tracking=True)
+    email = fields.Char("Email", tracking=True)
+    phone = fields.Char("Phone", tracking=True)
+
+    fees = fields.Monetary(
+        string="Total Fees",
+        compute="_compute_fees",
+        store=True,
+        currency_field='currency_id'
+    )
+
+    @api.depends('subject_ids.fee')
+    def _compute_fees(self):
+        for record in self:
+            fees_list = cast(List[float], record.subject_ids.mapped('fee'))
+            record.fees = sum(fees_list)
+
+    @api.depends('subject_ids.teacher_id')
+    def _compute_teacher(self):
+        for rec in self:
+            rec.teacher_id = rec.subject_ids.mapped('teacher_id')
+
     def action_confirm(self):
         for rec in self:
             rec.status = 'confirm'
@@ -88,6 +87,10 @@ class Student(models.Model):
     def action_done(self):
         for rec in self:
             rec.status = 'done'
+
+    def action_reset_to_draft(self):
+        for rec in self:
+            rec.status = 'draft'
 
     def action_pay(self):
         self.ensure_one()
@@ -121,3 +124,42 @@ class Student(models.Model):
             'view_mode': 'form',
             'res_id': invoice.id,
         }
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+
+            if vals.get('age', 0) < 18:
+                raise UserError("Student age must be at least 5")
+
+            if vals.get('email') and '@' not in vals.get('email'):
+                raise UserError("Invalid email format!")
+
+        return super().create(vals_list)
+
+    def write(self, vals):
+        for rec in self:
+
+            if rec.status in ['confirm', 'done']:
+                allowed_fields = ['status', 'notes']
+                restricted_fields = [f for f in vals if f not in allowed_fields]
+
+                if restricted_fields:
+                    raise UserError(
+                        "After Confirm/Done, only Status and Notes can be changed!"
+                    )
+
+            if 'age' in vals and vals['age'] < 18:
+                raise UserError("Student age must be at least 5")
+
+            if 'email' in vals and vals['email'] and '@' not in vals['email']:
+                raise UserError("Invalid email format!")
+
+        return super().write(vals)
+
+
+    def unlink(self):
+        for rec in self:
+            if rec.status == 'done':
+                raise UserError("You cannot delete Done records!")
+        return super().unlink()
