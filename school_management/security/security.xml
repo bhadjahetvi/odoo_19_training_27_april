@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================= GROUP ================= -->
+    <record id="group_school_teacher" model="res.groups">
+        <field name="name">School Teacher</field>
+    </record>
+
+    <!-- ================= TEACHER OWN RECORD RULE ================= -->
+    <record id="rule_teacher_own_record" model="ir.rule">
+
+        <field name="name">
+            Teacher Own Record
+        </field>
+
+        <field name="model_id" ref="model_school_teacher"/>
+
+        <field name="domain_force">
+            [('user_id', '=', user.id)]
+        </field>
+
+        <field name="groups"
+               eval="[(4, ref('school_management.group_school_teacher'))]"/>
+
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+
+    </record>
+
+    <!-- ================= STUDENT RULE ================= -->
+    <record id="rule_student_assigned_teacher" model="ir.rule">
+
+        <field name="name">
+            Teacher Assigned Students
+        </field>
+
+        <field name="model_id" ref="model_school_student"/>
+
+        <field name="groups"
+               eval="[(4, ref('school_management.group_school_teacher'))]"/>
+
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+
+    </record>
+
+    <record id="rule_teacher_own_subjects" model="ir.rule">
+
+    <field name="name">
+        Teacher Own Subjects
+    </field>
+
+    <field name="model_id" ref="model_school_subject"/>
+
+    <field name="groups"
+           eval="[(4, ref('school_management.group_school_teacher'))]"/>
+
+    <field name="perm_read" eval="1"/>
+    <field name="perm_write" eval="1"/>
+    <field name="perm_create" eval="1"/>
+    <field name="perm_unlink" eval="0"/>
+
+</record>
+
+</odoo>
