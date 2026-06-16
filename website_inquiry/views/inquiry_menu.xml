@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_website_inquiry_root"
+        name="Website Inquiry"
+        sequence="100"/>
+
+    <menuitem
+        id="menu_website_inquiry"
+        name="Inquiries"
+        parent="menu_website_inquiry_root"
+        action="action_website_inquiry"
+        sequence="10"/>
+
+</odoo>

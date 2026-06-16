@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- WEBSITE MENU -->
+    <template id="inquiry_menu" inherit_id="website.layout">
+
+        <xpath expr="//ul[hasclass('navbar-nav')]" position="inside">
+
+            <li class="nav-item">
+                <a class="nav-link" href="/inquiry">
+                    Inquiry
+                </a>
+            </li>
+
+        </xpath>
+
+    </template>
+
+    <!-- INQUIRY FORM -->
+    <template id="inquiry_form_template">
+
+        <t t-call="website.layout">
+
+            <div class="container py-5">
+
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-8">
+
+                        <div class="card shadow border-0">
+
+                            <div class="card-body p-5">
+
+                                <h2 class="text-center mb-4">
+                                    Contact Inquiry
+                                </h2>
+
+                                <p class="text-center text-muted mb-4">
+                                    Fill out the form below and our team will contact you shortly.
+                                </p>
+
+                                <t t-if="error">
+                                    <div class="alert alert-danger">
+                                        Please fill all required fields.
+                                    </div>
+                                </t>
+
+                                <form action="/inquiry/submit"
+                                      method="post"
+                                      id="inquiry_form">
+
+                                    <input type="hidden"
+                                           name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Full Name
+                                        </label>
+
+                                        <input type="text"
+                                               name="name"
+                                               class="form-control"
+                                               required="required"/>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            Email Address
+                                        </label>
+
+                                        <input type="email"
+                                               name="email"
+                                               class="form-control"/>
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label class="form-label">
+                                            Country
+                                        </label>
+
+                                        <select name="country_id"
+                                                id="country_select"
+                                                class="form-select"
+                                                onchange="updatePhoneCode(this)"
+                                                required="required">
+
+                                            <option value="">
+                                                Select Country
+                                            </option>
+
+                                            <t t-foreach="countries" t-as="c">
+
+                                                <option
+                                                    t-att-value="c.id"
+                                                    t-att-data-code="'+' + str(c.phone_code or '')">
+
+                                                    <t t-out="c.name"/>
+
+                                                </option>
+
+                                            </t>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label class="form-label">
+                                            Gender
+                                        </label>
+
+                                        <select name="gender"
+                                                class="form-select">
+
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+
+                                        </select>
+
+                                    </div>
+
+                                    <div class="mb-4">
+
+                                        <label class="form-label">
+                                            Phone Number
+                                        </label>
+
+                                        <input type="text"
+                                               name="phone"
+                                               id="phone"
+                                               class="form-control"
+                                               placeholder="Select country first"
+                                               required="required"/>
+
+                                    </div>
+
+                                    <div class="d-grid">
+
+                                        <button type="submit"
+                                                class="btn btn-primary btn-lg">
+
+                                            Submit Inquiry
+
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                                <!-- PHONE CODE SCRIPT -->
+                                <script type="text/javascript">
+
+                                    function updatePhoneCode(selectObj) {
+
+                                        var phoneInput =
+                                            document.getElementById('phone');
+
+                                        var selectedOption =
+                                            selectObj.options[selectObj.selectedIndex];
+
+                                        var code =
+                                            selectedOption.getAttribute('data-code');
+
+                                        if (code) {
+                                            phoneInput.value = code + ' ';
+                                        } else {
+                                            phoneInput.value = '';
+                                        }
+                                    }
+
+                                </script>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+    <!-- THANK YOU PAGE -->
+    <template id="thank_you_template">
+
+        <t t-call="website.layout">
+
+            <div class="container py-5">
+
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-6">
+
+                        <div class="card shadow border-0 text-center">
+
+                            <div class="card-body p-5">
+
+                                <h1 class="text-success mb-3">
+                                    Thank You!
+                                </h1>
+
+                                <p class="lead">
+                                    Your inquiry has been submitted successfully.
+                                </p>
+
+                                <p class="text-muted">
+                                    Our team will contact you shortly.
+                                </p>
+
+                                <a href="/"
+                                   class="btn btn-primary mt-3">
+                                    Go To Home
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </t>
+
+    </template>
+
+</odoo>

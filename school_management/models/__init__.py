@@ -3,3 +3,8 @@ from . import subject
 from . import school_fees
 from . import teacher
 from . import res_partner
+from . import sale_order
+from . import stock_picking
+from . import account_payment
+from . import account_move
+from . import weekly_sale_report

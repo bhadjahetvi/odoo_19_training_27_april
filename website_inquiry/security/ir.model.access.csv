@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_website_inquiry,access.website.inquiry,model_website_inquiry,,1,1,1,1
+access_website_inquiry,website.inquiry,model_website_inquiry,,1,1,1,1

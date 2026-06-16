@@ -1,12 +1,13 @@
 <odoo>
 
-    <!-- FORM VIEW  -->
+    <!-- ================= FORM VIEW ================= -->
     <record id="view_teacher_form" model="ir.ui.view">
         <field name="name">teacher.form</field>
         <field name="model">school.teacher</field>
         <field name="arch" type="xml">
 
             <form>
+
                 <header>
 
                     <button name="action_confirm"
@@ -29,36 +30,55 @@
 
                 <sheet>
 
+                    <!-- SMART BUTTON -->
                     <div class="oe_button_box" name="button_box">
 
-    <button name="action_view_students"
-            type="object"
-            class="oe_stat_button"
-            icon="fa-users">
+                        <button name="action_view_students"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-users">
 
-        <field name="student_count" widget="statinfo" string="Students"/>
+                            <field name="student_count"
+                                   widget="statinfo"
+                                   string="Students"/>
 
-    </button>
+                        </button>
 
-</div>
+                    </div>
 
                     <group col="2">
 
                         <!-- LEFT -->
                         <group string="Teacher Details">
-                            <field name="image" widget="image"/>
+
+                            <field name="image"
+                                   widget="image"/>
+
                             <field name="name"/>
+
                             <field name="age"/>
+
                             <field name="dob"/>
-                            <field name="gender" widget="radio"/>
-                            <field name="email" widget="email"/>
-                            <field name="phone" widget="phone"/>
+
+                            <field name="gender"
+                                   widget="radio"/>
+
+                            <field name="email"/>
+
+                            <field name="phone"/>
+
                         </group>
 
                         <!-- RIGHT -->
                         <group string="Professional Details">
+
                             <field name="subject"/>
+
                             <field name="salary"/>
+
+                            <field name="user_id"
+                                   readonly="1"/>
+
                         </group>
 
                     </group>
@@ -67,17 +87,27 @@
                     <notebook>
 
                         <page string="Students">
+
                             <field name="student_ids">
+
                                 <list editable="bottom">
+
                                     <field name="name"/>
+
                                     <field name="age"/>
+
                                     <field name="fees"/>
+
                                 </list>
+
                             </field>
+
                         </page>
 
                         <page string="Notes">
+
                             <field name="notes"/>
+
                         </page>
 
                     </notebook>
@@ -86,15 +116,20 @@
 
                 <!-- CHATTER -->
                 <chatter>
+
                     <field name="message_follower_ids"/>
+
                     <field name="activity_ids"/>
+
                     <field name="message_ids"/>
+
                 </chatter>
 
             </form>
 
         </field>
     </record>
+
 
     <!-- ================= LIST VIEW ================= -->
     <record id="view_teacher_list" model="ir.ui.view">
@@ -103,14 +138,20 @@
         <field name="arch" type="xml">
 
             <list>
+
                 <field name="name"/>
+
                 <field name="subject"/>
+
                 <field name="salary"/>
+
                 <field name="status"/>
+
             </list>
 
         </field>
     </record>
+
 
     <!-- ================= KANBAN VIEW ================= -->
     <record id="view_teacher_kanban" model="ir.ui.view">
@@ -119,27 +160,41 @@
         <field name="arch" type="xml">
 
             <kanban>
+
                 <field name="name"/>
                 <field name="image"/>
                 <field name="subject"/>
 
                 <templates>
+
                     <t t-name="card">
+
                         <div class="oe_kanban_global_click o_kanban_card">
 
                             <div>
+
                                 <img t-att-src="'/web/image/school.teacher/' + record.id.raw_value + '/image'"
                                      style="width:100px;height:100px;"
                                      alt="Teacher Image"/>
+
                             </div>
 
                             <div>
-                                <strong><field name="name"/></strong>
-                                <div><field name="subject"/></div>
+
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+
+                                <div>
+                                    <field name="subject"/>
+                                </div>
+
                             </div>
 
                         </div>
+
                     </t>
+
                 </templates>
 
             </kanban>
@@ -147,18 +202,16 @@
         </field>
     </record>
 
+
     <!-- ================= ACTION ================= -->
     <record id="action_teacher" model="ir.actions.act_window">
-        <field name="name">Teachers</field>
-        <field name="res_model">school.teacher</field>
-        <field name="view_mode">list,form,kanban</field>
-    </record>
 
-    <!-- ================= MENU ================= -->
-<menuitem id="menu_teacher"
-          name="Teachers"
-          parent="menu_school_root"
-          action="action_teacher"
-          sequence="2"/>
+        <field name="name">Teachers</field>
+
+        <field name="res_model">school.teacher</field>
+
+        <field name="view_mode">kanban,list,form</field>
+
+    </record>
 
 </odoo>

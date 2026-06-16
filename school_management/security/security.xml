@@ -38,6 +38,11 @@
 
         <field name="model_id" ref="model_school_student"/>
 
+        <!-- ONLY CONNECTED STUDENTS -->
+        <field name="domain_force">
+            [('teacher_id.user_id', '=', user.id)]
+        </field>
+
         <field name="groups"
                eval="[(4, ref('school_management.group_school_teacher'))]"/>
 
@@ -48,22 +53,28 @@
 
     </record>
 
+    <!-- ================= SUBJECT RULE ================= -->
     <record id="rule_teacher_own_subjects" model="ir.rule">
 
-    <field name="name">
-        Teacher Own Subjects
-    </field>
+        <field name="name">
+            Teacher Own Subjects
+        </field>
 
-    <field name="model_id" ref="model_school_subject"/>
+        <field name="model_id" ref="model_school_subject"/>
 
-    <field name="groups"
-           eval="[(4, ref('school_management.group_school_teacher'))]"/>
+        <!-- ONLY CONNECTED SUBJECTS -->
+        <field name="domain_force">
+            [('teacher_id.user_id', '=', user.id)]
+        </field>
 
-    <field name="perm_read" eval="1"/>
-    <field name="perm_write" eval="1"/>
-    <field name="perm_create" eval="1"/>
-    <field name="perm_unlink" eval="0"/>
+        <field name="groups"
+               eval="[(4, ref('school_management.group_school_teacher'))]"/>
 
-</record>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+
+    </record>
 
 </odoo>

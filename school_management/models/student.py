@@ -8,22 +8,46 @@ class Student(models.Model):
     _description = 'Student'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    name = fields.Char("Name", required=True, tracking=True)
-    age = fields.Integer("Age", tracking=True)
-    dob = fields.Date("Date of Birth", tracking=True)
-    admission_datetime = fields.Datetime("Admission Time", tracking=True)
+    # ---------------- BASIC ---------------- #
+    name = fields.Char(
+        "Name",
+        required=True,
+        tracking=True
+    )
+
+    age = fields.Integer(
+        "Age",
+        tracking=True
+    )
+
+    dob = fields.Date(
+        "Date of Birth",
+        tracking=True
+    )
+
+    admission_datetime = fields.Datetime(
+        "Admission Time",
+        tracking=True
+    )
 
     gender = fields.Selection([
         ('male', 'Male'),
         ('female', 'Female')
-    ], string="Gender", tracking=True)
+    ],
+        string="Gender",
+        tracking=True
+    )
 
     status = fields.Selection([
         ('draft', 'Draft'),
         ('confirm', 'Confirm'),
         ('done', 'Done')
-    ], default='draft', tracking=True)
+    ],
+        default='draft',
+        tracking=True
+    )
 
+    # ---------------- RELATIONS ---------------- #
     currency_id = fields.Many2one(
         'res.currency',
         string="Currency",
@@ -39,9 +63,13 @@ class Student(models.Model):
 
     teacher_id = fields.Many2many(
         'school.teacher',
-        string="Teacher",
-        compute="_compute_teacher",
-        store=True
+        'school_student_teacher_rel',
+        'student_id',
+        'teacher_id',
+        string="Teachers",
+        compute="_compute_teacher_id",
+        store=True,
+        tracking=True
     )
 
     fees_ids = fields.One2many(
@@ -57,10 +85,25 @@ class Student(models.Model):
         tracking=True
     )
 
-    notes = fields.Text("Notes", tracking=True)
-    image = fields.Binary("Image", tracking=True)
-    email = fields.Char("Email", tracking=True)
-    phone = fields.Char("Phone", tracking=True)
+    notes = fields.Text(
+        "Notes",
+        tracking=True
+    )
+
+    image = fields.Binary(
+        "Image",
+        tracking=True
+    )
+
+    email = fields.Char(
+        "Email",
+        tracking=True
+    )
+
+    phone = fields.Char(
+        "Phone",
+        tracking=True
+    )
 
     fees = fields.Monetary(
         string="Total Fees",
@@ -69,41 +112,71 @@ class Student(models.Model):
         currency_field='currency_id'
     )
 
+    # ---------------- COMPUTE ---------------- #
     @api.depends('subject_ids.fee')
     def _compute_fees(self):
+
         for record in self:
-            fees_list = cast(List[float], record.subject_ids.mapped('fee'))
+            fees_list = cast(
+                List[float],
+                record.subject_ids.mapped('fee')
+            )
+
             record.fees = sum(fees_list)
 
-    @api.depends('subject_ids.teacher_id')
-    def _compute_teacher(self):
-        for rec in self:
-            rec.teacher_id = rec.subject_ids.mapped('teacher_id')
+    @api.depends('subject_ids')
+    def _compute_teacher_id(self):
 
+        for rec in self:
+            rec.teacher_id = rec.subject_ids.mapped(
+                'teacher_id'
+            )
+
+    # ---------------- SYNC ---------------- #
+    def _sync_teacher_student(self):
+
+        for rec in self:
+
+            if rec.teacher_id:
+
+                rec.teacher_id.write({
+                    'student_ids': [(4, rec.id)]
+                })
+
+    # ---------------- BUTTONS ---------------- #
     def action_confirm(self):
+
         for rec in self:
             rec.status = 'confirm'
 
     def action_done(self):
+
         for rec in self:
             rec.status = 'done'
 
     def action_reset_to_draft(self):
+
         for rec in self:
             rec.status = 'draft'
 
+    # ---------------- PAYMENT ---------------- #
     def action_pay(self):
+
         self.ensure_one()
 
         if not self.fees:
-            raise UserError("Please set Fees first!")
+            raise UserError(
+                "Please set Fees first!"
+            )
 
         if not self.partner_id:
+
             partner = self.env['res.partner'].create({
                 'name': self.name,
                 'email': self.email,
                 'phone': self.phone,
             })
+
             self.partner_id = partner.id
 
         invoice = self.env['account.move'].create({
@@ -125,24 +198,44 @@ class Student(models.Model):
             'res_id': invoice.id,
         }
 
+    # ---------------- CREATE ---------------- #
     @api.model_create_multi
     def create(self, vals_list):
+
         for vals in vals_list:
 
             if vals.get('age', 0) < 18:
-                raise UserError("Student age must be at least 5")
+                raise UserError(
+                    "Student age must be at least 18"
+                )
 
             if vals.get('email') and '@' not in vals.get('email'):
-                raise UserError("Invalid email format!")
+                raise UserError(
+                    "Invalid email format!"
+                )
 
-        return super().create(vals_list)
+        records = super().create(vals_list)
 
+        records._sync_teacher_student()
+
+        return records
+
+    # ---------------- WRITE ---------------- #
     def write(self, vals):
+
         for rec in self:
 
             if rec.status in ['confirm', 'done']:
-                allowed_fields = ['status', 'notes']
-                restricted_fields = [f for f in vals if f not in allowed_fields]
+
+                allowed_fields = [
+                    'status',
+                    'notes'
+                ]
+
+                restricted_fields = [
+                    f for f in vals
+                    if f not in allowed_fields
+                ]
 
                 if restricted_fields:
                     raise UserError(
@@ -150,16 +243,33 @@ class Student(models.Model):
                     )
 
             if 'age' in vals and vals['age'] < 18:
-                raise UserError("Student age must be at least 5")
+                raise UserError(
+                    "Student age must be at least 18"
+                )
 
-            if 'email' in vals and vals['email'] and '@' not in vals['email']:
-                raise UserError("Invalid email format!")
+            if (
+                'email' in vals and
+                vals['email'] and
+                '@' not in vals['email']
+            ):
+                raise UserError(
+                    "Invalid email format!"
+                )
 
-        return super().write(vals)
+        res = super().write(vals)
 
+        self._sync_teacher_student()
 
+        return res
+
+    # ---------------- DELETE ---------------- #
     def unlink(self):
+
         for rec in self:
+
             if rec.status == 'done':
-                raise UserError("You cannot delete Done records!")
+                raise UserError(
+                    "You cannot delete Done records!"
+                )
+
         return super().unlink()

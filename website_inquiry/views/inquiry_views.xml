@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Kanban View -->
+    <record id="view_website_inquiry_kanban" model="ir.ui.view">
+        <field name="name">website.inquiry.kanban</field>
+        <field name="model">website.inquiry</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+
+                    <t t-name="card">
+
+                        <div class="oe_kanban_global_click rounded border p-3 bg-white">
+
+                            <!-- Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="fs-5">
+                                    <field name="name"/>
+                                </strong>
+
+                                <span class="badge bg-info">
+                                    <field name="country_id"/>
+                                </span>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="text-muted mb-3">
+                                <field name="email"/>
+                            </div>
+
+                            <!-- Details -->
+                            <div class="mb-1">
+                                <strong>Gender:</strong>
+                                <field name="gender"/>
+                            </div>
+
+                            <div class="mb-1">
+                                <strong>Phone:</strong>
+                                +<field name="phone_code"/>
+                                <field name="phone"/>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="mt-3 text-muted">
+                                <small>
+                                    Created:
+                                    <field name="create_date"/>
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </t>
+
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_website_inquiry_list" model="ir.ui.view">
+        <field name="name">website.inquiry.list</field>
+        <field name="model">website.inquiry</field>
+        <field name="arch" type="xml">
+            <list string="Website Inquiries">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="country_id"/>
+                <field name="gender"/>
+                <field name="phone"/>
+                <field name="phone_code"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_website_inquiry_form" model="ir.ui.view">
+        <field name="name">website.inquiry.form</field>
+        <field name="model">website.inquiry</field>
+        <field name="arch" type="xml">
+            <form string="Website Inquiry">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="country_id"/>
+                        <field name="gender"/>
+                        <field name="phone"/>
+                        <field name="phone_code"/>
+                        <field name="create_date" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_website_inquiry" model="ir.actions.act_window">
+        <field name="name">Website Inquiries</field>
+        <field name="res_model">website.inquiry</field>
+        <field name="view_mode">list,kanban,form</field>
+    </record>
+
+</odoo>

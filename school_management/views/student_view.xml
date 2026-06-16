@@ -15,25 +15,26 @@
                             class="btn-primary"
                             invisible="status != 'draft'"/>
 
-                        <button name="action_done"
-                                string="Done"
-                                type="object"
-                                class="btn-success"
-                                invisible="status != 'confirm'"/>
+                    <button name="action_done"
+                            string="Done"
+                            type="object"
+                            class="btn-success"
 
-                        <button name="action_pay"
-                                string="Pay"
-                                type="object"
-                                class="btn-warning"
-                                invisible="status != 'confirm'"/>
 
-                        <button name="action_reset_to_draft"
-                                string="Reset to Draft"
-                                type="object"
-                                class="btn-secondary"
-                                invisible="status == 'draft'"/>
+                            invisible="status != 'confirm'"/>
 
-                    <!--Statusbar -->
+                    <button name="action_pay"
+                            string="Pay"
+                            type="object"
+                            class="btn-warning"
+                            invisible="status != 'confirm'"/>
+
+                    <button name="action_reset_to_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="status == 'draft'"/>
+
                     <field name="status"
                            widget="statusbar"
                            statusbar_visible="draft,confirm,done"/>
@@ -42,10 +43,8 @@
 
                 <sheet>
 
-                    <!-- HEADER -->
                     <div class="d-flex flex-column flex-sm-row align-items-center">
 
-                        <!-- IMAGE -->
                         <div class="ms-2 p-0">
                             <field name="image"
                                    widget="image"
@@ -53,12 +52,10 @@
                                    options="{'size': [128,128]}"/>
                         </div>
 
-                        <!-- DETAILS -->
                         <div class="col-12 col-sm-6 col-md-7 col-lg-8 px-4">
 
                             <div class="oe_title mw-100">
 
-                                <!-- NAME -->
                                 <h1>
                                     <field name="name"
                                            placeholder="Student Name"
@@ -66,49 +63,44 @@
                                            style="font-size: 2.5rem;"/>
                                 </h1>
 
-                                <!-- EMAIL -->
                                 <h5 class="d-flex align-items-center mb-1">
                                     <i class="fa fa-envelope me-2 text-primary"/>
                                     <field name="email" widget="email"/>
                                 </h5>
 
-                                <!-- PHONE -->
                                 <h5 class="d-flex align-items-center mb-1">
                                     <i class="fa fa-phone me-2 text-primary"/>
                                     <field name="phone" widget="phone"/>
                                 </h5>
 
-                                <!-- GENDER -->
                                 <h5 class="d-flex align-items-center mb-1">
                                     <i class="fa fa-user me-2 text-primary"/>
                                     <field name="gender"/>
                                 </h5>
 
                             </div>
+
                         </div>
 
                     </div>
 
                     <group col="2">
 
-                        <!-- LEFT -->
                         <group string="Other Details">
                             <field name="age"/>
                             <field name="dob"/>
                             <field name="admission_datetime"/>
                         </group>
 
-                        <!-- RIGHT -->
                         <group string="School Details">
                             <field name="subject_ids" widget="many2many_tags"/>
-                            <field name="teacher_id" widget="many2many_tags"/>
+                            <field name="teacher_id" widget="many2many_tags" readonly="1"/>
                             <field name="currency_id"/>
                             <field name="fees" widget="monetary" readonly="1"/>
                         </group>
 
                     </group>
 
-                    <!-- NOTES -->
                     <notebook>
                         <page string="Notes">
                             <field name="notes"/>
@@ -117,7 +109,6 @@
 
                 </sheet>
 
-                <!-- CHATTER -->
                 <chatter>
                     <field name="message_follower_ids"/>
                     <field name="activity_ids"/>
@@ -155,12 +146,15 @@
         <field name="arch" type="xml">
 
             <kanban>
+
                 <field name="name"/>
                 <field name="image"/>
                 <field name="fees"/>
 
                 <templates>
+
                     <t t-name="card">
+
                         <div class="oe_kanban_global_click o_kanban_card">
 
                             <div>
@@ -170,12 +164,21 @@
                             </div>
 
                             <div>
-                                <strong><field name="name"/></strong>
-                                <div>Fees: <field name="fees"/></div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+
+                                <div>
+                                    Fees:
+                                    <field name="fees"/>
+                                </div>
+
                             </div>
 
                         </div>
+
                     </t>
+
                 </templates>
 
             </kanban>
@@ -190,14 +193,5 @@
         <field name="res_model">school.student</field>
         <field name="view_mode">list,form,kanban</field>
     </record>
-
-
-    <!-- ================= MENU ================= -->
-    <menuitem id="menu_school_root" name="School"/>
-    <menuitem id="menu_student"
-              name="Students"
-              parent="menu_school_root"
-              action="action_student"
-              sequence="1"/>
 
 </odoo>
